@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using MyServiceBus.Abstractions;
 using MyServiceBus.TcpClient;
@@ -23,11 +25,20 @@ namespace Service.TestServiceBus.Jobs
 
         public void Start()
         {
-            var topic = "bidask";
             var sb = new StringBuilder();
 
-            SubscribeToTopic(topic, sb);
+            var url = $"http://{Program.Settings.WebServiceBusHostPort}/Topics";
 
+            var http = new HttpClient();
+
+            var body = http.GetStringAsync(url).GetAwaiter().GetResult();
+
+            var list = JsonSerializer.Deserialize<List<TopicItem>>(body);
+
+            foreach (var item in list)
+            {
+                SubscribeToTopic(item.id, sb);
+            }
 
             _botApiClient = new TelegramBotClient(Program.Settings.BotApiKey);
 
@@ -38,10 +49,11 @@ namespace Service.TestServiceBus.Jobs
         {
             _lasted[$"{topic}[single]"] = 0;
             _lasted[$"{topic}[batch]"] = 0;
-            _client.Subscribe(topic, "tester-single", TopicQueueType.DeleteOnDisconnect,
-                m => BidAskCallback(m, $"{topic}[single]"));
-            _client.Subscribe(topic, "tester-batch", TopicQueueType.DeleteOnDisconnect,
-                (context, list) => BidAskBatchCallback(list, $"{topic}[batch]"));
+            
+            _client.Subscribe(topic, "tester-single", TopicQueueType.DeleteOnDisconnect, m => BidAskCallback(m, $"{topic}[single]"));
+            
+            _client.Subscribe(topic, "tester-batch", TopicQueueType.DeleteOnDisconnect, (context, list) => BidAskBatchCallback(list, $"{topic}[batch]"));
+
             sb.AppendLine($"[{Program.Settings.Name}] Subscribe to {topic}");
         }
 
@@ -85,6 +97,12 @@ namespace Service.TestServiceBus.Jobs
             //Console.WriteLine($"{topic}: {messages.Count}");
 
             return;
+        }
+
+        public class TopicItem
+        {
+            public string id { get; set; }
+            public long messageId { get; set; }
         }
     }
 }
