@@ -93,7 +93,7 @@ namespace Service.TestServiceBus.Jobs
 
             _lasted[topic] = max;
 
-            Console.WriteLine($"{topic} - {messages.Count}");
+            //Console.WriteLine($"{topic} - {messages.Count}");
         }
 
         public class TopicItem
