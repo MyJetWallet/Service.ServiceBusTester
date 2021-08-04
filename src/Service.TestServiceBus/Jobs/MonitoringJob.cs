@@ -50,24 +50,23 @@ namespace Service.TestServiceBus.Jobs
             _lasted[$"{topic}[single]"] = 0;
             _lasted[$"{topic}[batch]"] = 0;
             
-            _client.Subscribe(topic, "tester-single", TopicQueueType.DeleteOnDisconnect, m => BidAskCallback(m, $"{topic}[single]"));
+            _client.Subscribe(topic, "tester-single-1", TopicQueueType.DeleteOnDisconnect, m => BidAskCallback(m, $"{topic}[single]"));
             
-            _client.Subscribe(topic, "tester-batch", TopicQueueType.DeleteOnDisconnect, (context, list) => BidAskBatchCallback(list, $"{topic}[batch]"));
+            _client.Subscribe(topic, "tester-batch-1", TopicQueueType.DeleteOnDisconnect, (context, list) => BidAskBatchCallback(list, $"{topic}[batch]"));
 
             sb.AppendLine($"[{Program.Settings.Name}] Subscribe to {topic}");
         }
 
-        private ValueTask BidAskCallback(IMyServiceBusMessage message, string topic)
+        private async ValueTask BidAskCallback(IMyServiceBusMessage message, string topic)
         {
             var lasted = _lasted[topic];
             if (lasted > 0 && lasted != message.Id - 1)
             {
                 Console.WriteLine($"Wrong ID, Topic {topic}. Receive Id = {message.Id}, but lasted = {lasted}");
+                await _botApiClient.SendTextMessageAsync(Program.Settings.ChatId, $"{Program.Settings.Name}] Wrong ID, Topic {topic}. Receive Id = {message.Id}, but lasted = {lasted}");
             }
 
             _lasted[topic] = message.Id;
-
-            return new ValueTask();
         }
 
         private async ValueTask BidAskBatchCallback(IReadOnlyList<IMyServiceBusMessage> messages, string topic)
@@ -94,9 +93,7 @@ namespace Service.TestServiceBus.Jobs
 
             _lasted[topic] = max;
 
-            //Console.WriteLine($"{topic}: {messages.Count}");
-
-            return;
+            Console.WriteLine($"{topic} - {messages.Count}");
         }
 
         public class TopicItem
