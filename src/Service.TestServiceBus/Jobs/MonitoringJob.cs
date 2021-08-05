@@ -59,14 +59,17 @@ namespace Service.TestServiceBus.Jobs
 
         private async ValueTask BidAskCallback(IMyServiceBusMessage message, string topic)
         {
-            var lasted = _lasted[topic];
+            long lasted;
+
+            lock(_lasted) lasted = _lasted[topic];
+            
             if (lasted > 0 && lasted != message.Id - 1)
             {
                 Console.WriteLine($"Wrong ID, Topic {topic}. Receive Id = {message.Id}, but lasted = {lasted}");
                 await _botApiClient.SendTextMessageAsync(Program.Settings.ChatId, $"{Program.Settings.Name}] Wrong ID, Topic {topic}. Receive Id = {message.Id}, but lasted = {lasted}");
             }
 
-            _lasted[topic] = message.Id;
+            lock (_lasted) _lasted[topic] = message.Id;
         }
 
         private async ValueTask BidAskBatchCallback(IReadOnlyList<IMyServiceBusMessage> messages, string topic)
@@ -74,7 +77,8 @@ namespace Service.TestServiceBus.Jobs
             if (messages.Count == 0)
                 return;
 
-            var lasted = _lasted[topic];
+            long lasted;
+            lock (_lasted) lasted = _lasted[topic];
 
             var min = messages.Min(e => e.Id);
             var max = messages.Max(e => e.Id);
@@ -91,7 +95,7 @@ namespace Service.TestServiceBus.Jobs
                 await _botApiClient.SendTextMessageAsync(Program.Settings.ChatId, $"[{Program.Settings.Name}] Miss messages in batch, Topic {topic}. Receive min Id = {min}, max = {max}, but count = {messages.Count}");
             }
 
-            _lasted[topic] = max;
+            lock (_lasted) _lasted[topic] = max;
 
             //Console.WriteLine($"{topic} - {messages.Count}");
         }
