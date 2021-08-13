@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Grpc.Core.Logging;
 using MyServiceBus.Abstractions;
 using MyServiceBus.TcpClient;
 using Telegram.Bot;
@@ -25,6 +26,11 @@ namespace Service.TestServiceBus.Jobs
 
         public void Start()
         {
+            if (Program.Settings.ChatId == 0)
+            {
+                return;
+            }
+
             var sb = new StringBuilder();
 
             var url = $"http://{Program.Settings.WebServiceBusHostPort}/Topics";

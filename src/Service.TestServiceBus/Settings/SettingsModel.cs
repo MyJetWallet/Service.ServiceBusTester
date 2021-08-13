@@ -26,6 +26,9 @@ namespace Service.TestServiceBus.Settings
         [YamlProperty("TestServiceBus.ChatId")]
         public long ChatId { get; set; }
 
+        [YamlProperty("TestServiceBus.TestChatId")]
+        public long TestChatId { get; set; }
+
         [YamlProperty("TestServiceBus.BotApiKey")]
         public string BotApiKey { get; set; }
 

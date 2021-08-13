@@ -13,10 +13,10 @@ namespace Service.TestServiceBus.Modules
             var client = new MyServiceBusTcpClient(Program.ReloadedSettings(e => e.ServiceBusHostPort), "Tester");
 
             builder.RegisterInstance(client).AsSelf().SingleInstance();
-
-
+            
             builder.RegisterType<MonitoringJob>().AsSelf().SingleInstance();
 
+            builder.RegisterType<TestJob>().AsSelf().SingleInstance();
 
         }
     }
