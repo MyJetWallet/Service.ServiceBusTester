@@ -14,14 +14,14 @@ namespace Service.TestServiceBus
         private readonly TestJob _testJob;
 
         public ApplicationLifetimeManager(IHostApplicationLifetime appLifetime, ILogger<ApplicationLifetimeManager> logger,
-            MonitoringJob job,
+            //MonitoringJob job,
             MyServiceBusTcpClient client,
             TestJob testJob
             )
             : base(appLifetime)
         {
             _logger = logger;
-            _job = job;
+            //_job = job;
             _client = client;
             _testJob = testJob;
         }
@@ -29,7 +29,7 @@ namespace Service.TestServiceBus
         protected override void OnStarted()
         {
             _logger.LogInformation("OnStarted has been called.");
-            _job.Start();
+            //_job.Start();
             _client.Start();
             _testJob.Start();
         }
