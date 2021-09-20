@@ -61,6 +61,8 @@ namespace Service.TestServiceBus.Jobs
             try
             {
                 await _client.PublishAsync(TopicName, Encoding.UTF8.GetBytes(str), false);
+                Console.WriteLine($"TIMER: {DateTime.UtcNow}");
+                
 
                 if ((DateTime.UtcNow - _lasetReceiveTiem).TotalSeconds > 60)
                     message = $"do not receive messages in {(DateTime.UtcNow - _lasetReceiveTiem)}";
