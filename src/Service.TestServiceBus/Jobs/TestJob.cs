@@ -11,7 +11,7 @@ namespace Service.TestServiceBus.Jobs
 {
     public class TestJob
     {
-        public const string TopicName = "Test-SB-topic";
+        public const string TopicName = "test-sb-topic";
 
         private readonly MyServiceBusTcpClient _client;
         private readonly ILogger<TestJob> _logger;
