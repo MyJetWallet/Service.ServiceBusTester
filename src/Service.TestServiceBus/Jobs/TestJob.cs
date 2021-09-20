@@ -35,8 +35,11 @@ namespace Service.TestServiceBus.Jobs
             _client.Subscribe(TopicName, "TestServiceBus", TopicQueueType.DeleteOnDisconnect, HandleMessage);
             _timer.Start();
 
-            _botApiClient = new TelegramBotClient(Program.Settings.BotApiKey);
-            _botApiClient.SendTextMessageAsync(Program.Settings.TestChatId, $"Service bus {Program.Settings.ServiceBusHostPort} start to test").GetAwaiter().GetResult();
+            if (!string.IsNillOrEmpty(Program.Settings.BotApiKey))
+            {
+                _botApiClient = new TelegramBotClient(Program.Settings.BotApiKey);
+                _botApiClient.SendTextMessageAsync(Program.Settings.TestChatId, $"Service bus {Program.Settings.ServiceBusHostPort} start to test").GetAwaiter().GetResult();
+            }
         }
 
         private ValueTask HandleMessage(IMyServiceBusMessage msg)
@@ -69,7 +72,7 @@ namespace Service.TestServiceBus.Jobs
 
             if (!string.IsNullOrEmpty(message) && (DateTime.UtcNow - _lastSendTime).TotalMinutes >= 5)
             {
-                await _botApiClient.SendTextMessageAsync(Program.Settings.TestChatId, message);
+                await _botApiClient?.SendTextMessageAsync(Program.Settings.TestChatId, message);
 
                 _lastSendTime = DateTime.UtcNow;
             }
