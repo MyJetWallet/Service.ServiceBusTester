@@ -68,6 +68,7 @@ namespace Service.TestServiceBus.Jobs
             catch (Exception ex)
             {
                 message = $"cannot send message to ServiceBUS\n{ex.ToString()}";
+                Console.WriteLine($"ERROR: {message}");
             }
 
             if (!string.IsNullOrEmpty(message) && (DateTime.UtcNow - _lastSendTime).TotalMinutes >= 5)
