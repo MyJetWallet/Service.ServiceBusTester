@@ -14,7 +14,7 @@ namespace Service.TestServiceBus.Modules
 
             builder.RegisterInstance(client).AsSelf().SingleInstance();
             
-            builder.RegisterType<MonitoringJob>().AsSelf().SingleInstance();
+            //builder.RegisterType<MonitoringJob>().AsSelf().SingleInstance();
 
             builder.RegisterType<TestJob>().AsSelf().SingleInstance();
 
