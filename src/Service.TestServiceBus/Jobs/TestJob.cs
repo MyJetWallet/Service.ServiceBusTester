@@ -35,7 +35,7 @@ namespace Service.TestServiceBus.Jobs
             _client.Subscribe(TopicName, "TestServiceBus", TopicQueueType.DeleteOnDisconnect, HandleMessage);
             _timer.Start();
 
-            if (!string.IsNillOrEmpty(Program.Settings.BotApiKey))
+            if (!string.IsNullOrEmpty(Program.Settings.BotApiKey))
             {
                 _botApiClient = new TelegramBotClient(Program.Settings.BotApiKey);
                 _botApiClient.SendTextMessageAsync(Program.Settings.TestChatId, $"Service bus {Program.Settings.ServiceBusHostPort} start to test").GetAwaiter().GetResult();
