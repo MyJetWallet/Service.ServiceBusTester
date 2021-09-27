@@ -8,3 +8,11 @@
 
 *Client library:* ![Nuget version](https://img.shields.io/nuget/v/MyJetWallet.Service.TestServiceBus.Client?label=MyJetWallet.Service.TestServiceBus.Client&style=social)
 
+## settings
+
+To enable monitoring of all topics:
+* setup ChatId != 0
+* setup WebServiceBusHostPort
+
+To enabled test topic publisher\subscriber:
+* setup TestChatId

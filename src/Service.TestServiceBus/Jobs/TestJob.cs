@@ -31,15 +31,18 @@ namespace Service.TestServiceBus.Jobs
 
         public void Start()
         {
+            if (!string.IsNullOrEmpty(Program.Settings.BotApiKey) && Program.Settings.TestChatId != 0)
+            {
+                Console.WriteLine("=== TestJob is disabled ===");
+                return;
+            }
+            
+            _botApiClient = new TelegramBotClient(Program.Settings.BotApiKey);
+            _botApiClient.SendTextMessageAsync(Program.Settings.TestChatId, $"Service bus {Program.Settings.ServiceBusHostPort} start to test").GetAwaiter().GetResult();
+
             _client.CreateTopicIfNotExists(TopicName);
             _client.Subscribe(TopicName, "TestServiceBus", TopicQueueType.DeleteOnDisconnect, HandleMessage);
             _timer.Start();
-
-            if (!string.IsNullOrEmpty(Program.Settings.BotApiKey))
-            {
-                _botApiClient = new TelegramBotClient(Program.Settings.BotApiKey);
-                _botApiClient.SendTextMessageAsync(Program.Settings.TestChatId, $"Service bus {Program.Settings.ServiceBusHostPort} start to test").GetAwaiter().GetResult();
-            }
         }
 
         private ValueTask HandleMessage(IMyServiceBusMessage msg)

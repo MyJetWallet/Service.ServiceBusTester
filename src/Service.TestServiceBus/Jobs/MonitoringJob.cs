@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Autofac;
 using Grpc.Core.Logging;
 using MyServiceBus.Abstractions;
 using MyServiceBus.TcpClient;
@@ -26,8 +27,10 @@ namespace Service.TestServiceBus.Jobs
 
         public void Start()
         {
-            if (Program.Settings.ChatId == 0)
+            if (Program.Settings.ChatId == 0 || string.IsNullOrEmpty(Program.Settings.WebServiceBusHostPort)
+            || string.IsNullOrEmpty(Program.Settings.BotApiKey))
             {
+                Console.WriteLine("=== MonitoringJob is disabled ===");
                 return;
             }
 
