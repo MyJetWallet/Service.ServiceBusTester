@@ -31,7 +31,7 @@ namespace Service.TestServiceBus.Jobs
 
         public void Start()
         {
-            if (!string.IsNullOrEmpty(Program.Settings.BotApiKey) && Program.Settings.TestChatId != 0)
+            if (!string.IsNullOrEmpty(Program.Settings.BotApiKey) && Program.Settings.TestChatId == 0)
             {
                 Console.WriteLine("=== TestJob is disabled ===");
                 return;
